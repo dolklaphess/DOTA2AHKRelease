@@ -27,7 +27,7 @@ DotaClass.ahk，同时依赖DotaFunc.ahk，Mymath.ahk，以及配置文件4abili
 发现BUG请联系我，当然受限于AHK功能部分问题不做修复保证。
 
 # Changelog
-## a0.40
+## a0.50
 2019-5-19 21:37:27
 
 新增Kunkka.ahk，按Q键将自动放洪流并在1.55秒后拉回敌人。按T键切臂章（如果存在）。
