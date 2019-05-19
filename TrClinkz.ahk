@@ -68,11 +68,13 @@ Loop 6
 	Hotkey "If",Format('WinActive("ahk_exe dota2.exe")&&(soul_number==' A_Index ')&&(treads_number>0)')
 	Hotkey default_item_triggerkey[A_Index],"UseSoul"
 }
-Loop 4
+Loop 3
 {
 	Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(treads_number>0)'
 	Hotkey default_ability_triggerkey[A_Index],Format("Hero46CastAbility" A_Index)
 }
+	Hotkey "If",'WinActive("ahk_exe dota2.exe")'
+	Hotkey default_ability_triggerkey[4],"Hero46CastAbility4"
 Hotkey "If"
 
 ;#include put other script which contain hotkeys here.
