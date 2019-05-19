@@ -70,6 +70,20 @@ Hotkey "If"
 
 ;#include put other script which contain hotkeys here.
 
+#SuspendExempt
+~NumpadSub::
+Suspend "Off"
+SoundBeep 523
+SoundBeep 262
+return
+
+~NumpadAdd::
+Suspend "On"
+SoundBeep 262
+SoundBeep 523
+return
+#SuspendExempt 0
+
 ~^LWin::
 Reload
 return

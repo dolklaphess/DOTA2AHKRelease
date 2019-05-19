@@ -4,6 +4,20 @@ x0:=1050
 y0:=980
 canceled:=0
 
+#SuspendExempt
+~NumpadSub::
+Suspend "Off"
+SoundBeep 523
+SoundBeep 262
+return
+
+~NumpadAdd::
+Suspend "On"
+SoundBeep 262
+SoundBeep 523
+return
+#SuspendExempt 0
+
 ~^LWin::
 Reload
 return

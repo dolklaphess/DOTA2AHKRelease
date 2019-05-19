@@ -50,6 +50,7 @@ Loop 6
 }
 return
 
+#SuspendExempt
 ~NumpadSub::
 Suspend "Off"
 SoundBeep 523
@@ -61,6 +62,7 @@ Suspend "On"
 SoundBeep 262
 SoundBeep 523
 return
+#SuspendExempt 0
 
 ~^LWin::
 Reload
