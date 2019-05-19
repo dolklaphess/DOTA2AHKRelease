@@ -22,6 +22,8 @@ DotaClass.ahk，同时依赖DotaFunc.ahk，Mymath.ahk，以及配置文件4abili
 
 通常来说本页内的大多数脚本设定键均为Shift+S，重启键均为Ctrl+LWin。
 
+发现BUG请联系我，当然受限于AHK功能部分问题不做修复保证。
+
 # Changelog
 ## a0.40
 2019-4-15 14:38:51
