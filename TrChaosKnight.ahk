@@ -77,13 +77,13 @@ Hotkey "If"
 
 #SuspendExempt
 ~NumpadSub::
-Suspend "Off"
+Suspend "On"
 SoundBeep 523
 SoundBeep 262
 return
 
 ~NumpadAdd::
-Suspend "On"
+Suspend "Off"
 SoundBeep 262
 SoundBeep 523
 return

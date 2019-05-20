@@ -22,7 +22,7 @@ DotaClass.ahk，同时依赖DotaFunc.ahk，Mymath.ahk，以及配置文件4abili
 
 短时间内发送相反的滚轮指令可能会被系统block掉，AHK无法解决这一问题，安排时需要谨慎。
 
-通常来说本页内的大多数脚本设定键均为Shift+S，重启键为Ctrl+LWin，暂停为小键盘+，恢复为小键盘-。
+通常来说本页内的大多数脚本设定键均为Shift+S，重启键为Ctrl+LWin，暂停为小键盘-，恢复为小键盘+。
 
 发现BUG请联系我，当然受限于AHK功能部分问题不做修复保证。
 
