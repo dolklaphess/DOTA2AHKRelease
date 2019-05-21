@@ -16,7 +16,7 @@ DotaClass.ahk，同时依赖DotaFunc.ahk，Mymath.ahk，以及配置文件4abili
 
 作者个人使用统一键位快捷施法，如果使用普通施法的，可以单独设置快捷施法按键或在Send内加入{Click}
 
-使用传统键位或者特定英雄有不同改键的，请按格式修改脚本中以下部分：new DotaClass(n_ability,dir,,["q","w","e","r","d","f"],["q","w","e","r","d","f"])
+使用传统键位或者特定英雄有不同改键的，请按以下格式修改脚本自动运行段中加入快捷键数组：hero:=new DotaClass(n_ability,dir,,["q","w","e","r","d","f"],["q","w","e","r","d","f"])
 
 本脚本库可适应高度为1080的各种不同比例的dota2分辨率设置，但完全不支持其余高度的屏幕。
 
