@@ -65,7 +65,7 @@ class ColorProbe
 		return probe_bitmap
 	}
 	
-		TrueCoordinateCapture(xs,ys,ws,hs,hhdc:=0)
+		RealCoordinateCapture(xs,ys,ws,hs,hhdc:=0)
 	{
 		Critical "On"
 		hhdc := hhdc ? hhdc : GetDC(WinGetID(this.default_screen))
