@@ -7,7 +7,7 @@ SetWorkingDir A_ScriptDir
 #include Gdip_All.ahk
 
 global default_item_nkey:=["{WheelUp}","{WheelDown}","{space}","6","{XButton2}","{XButton1}",,,,"5"] ;my default, adjust it for yourself or read from ini. 1~3 are always quick
-global default_item_qkey:=["{WheelUp}","{WheelDown}","{space}","6","{XButton2}{click}","{XButton1}{click}",,,"5{click}"]
+global default_item_qkey:=["{WheelUp}","{WheelDown}","{space}","6{click}","{XButton2}{click}","{XButton1}{click}",,,"5{click}"]
 global default_castkey := ["w","e","r","g","d","f"]
 global default_ncastkey := ["w","e","r","g","d","f"]
 /*
@@ -219,6 +219,20 @@ class DotaInventory
 		}
 				bitmap.UnLockBits()
 		return
+	}
+		IsReady(n,probe,dict)
+	{
+		bitmap:=probe.BltCapture(1425,938,250,178)
+		slotvector:= new SlotARGBVector
+		bitmap.LockBits()		
+		slotvector.AcquireFromBitmap(bitmap,n,this.n_ability)
+		bitmap.UnLockBits()
+		name:=dict.Find(slotvector,sn)
+		if(sn==this.slot[n].sn) ;maybe in cooldown
+		return 1
+		else
+		return 0
+		
 	}
 	Refresh(probe,dict,n)
 	{
