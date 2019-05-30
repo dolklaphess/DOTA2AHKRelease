@@ -31,6 +31,12 @@ DotaClass.ahk，同时依赖DotaFunc.ahk，Mymath.ahk，以及配置文件4abili
 带有Tr前缀的脚本均基于通用假腿脚本制作。
 
 # Changelog
+## a0.70
+2019-5-30 21:34:07
+
+新增NyxAssassin.ahk，提供小强一键吹风接戳功能，默认的快捷键是Q。
+
+
 ## a0.60
 2019-5-23 18:59:44
 
