@@ -68,6 +68,7 @@ return
 Reload
 return
 
+
 ^CapsLock::
 Rep_Stat := 1 - Rep_Stat
 ToolTip("Rep_Stat:" Rep_Stat,tip2_x,tip2_y,2)
@@ -130,9 +131,9 @@ if(Auto_Attack<2)
 else
 {
 	Auto_Attack := 0
-}
+} 
 Clipboard := Format("dota_player_units_auto_attack_mode " Auto_Attack)
-SendEvent "{Numpad0}^v{Enter}{Esc}"
+SendEvent "{NumpadDot}^v{Enter}{Esc}"
 ToolTip("Hero Attack:" Auto_Attack,tip2_x,tip2_y,2)
 MT.Timer("Tip2Off",-3000)
 return
@@ -147,7 +148,7 @@ else
 	Unit_Attack := -1
 }
 Clipboard := Format("dota_summoned_units_auto_attack_mode_2 " Unit_Attack)
-SendEvent "{Numpad0}^v{Enter}{Esc}"
+SendEvent "{NumpadDot}^v{Enter}{Esc}"
 ToolTip("Unit Attack:" Unit_Attack,tip2_x,tip2_y,2)
 MT.Timer("Tip2Off",-3000)
 return

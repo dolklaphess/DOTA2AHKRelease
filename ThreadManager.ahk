@@ -24,7 +24,7 @@ class ThreadManager
 	return
 	}
 	
-	SetTimeoutTimer(timeout,Callback,do_on_timeout:=0)
+	ModifyTimeoutTimer(timeout,Callback,do_on_timeout:=0) 
 	{
 			
 				if(timeout>0)
@@ -204,63 +204,5 @@ class ThreadWithProperty
 		}
 return
 	}
-	/*
-	Period[] ;0:off,+:period,-:run only once
-	{
-		set
-		{
-			this.ppt_Period:=value
-			TimeStart:=A_TickCount
-			return value
-		}
-		get
-		{
-		return this.ppt_Period
-		}
-	}
-	on_off[]
-	{
-		get
-		{
-		return this.ppt_on_off
-		}
-		set
-		{
-		this.ppt_on_off:=value
-			TimeStart:=A_TickCount
-			return value
-		}
-	}
-	*/
 }
-
-/*
-class TimeoutTimer extends ThreadWithProperty
-{
-Priority:=100 ;high priority
-
-	__New(Callback,manager,timeout)
-	{
-		this.Callback:=Callback
-		this.Period:=-timeout
-		this.on_off:=0
-		this.manager:=manager
-		this.TimeStart:=A_TickCount
-		this.timer:= ObjBindMethod(this,"TurnOff")
-		MsgBox this.Period
-		SetTimer(this.timer,this.Period,this.Priority)
-		return this
-	}
 	
-	TurnOff()
-	{
-		if(this.manager.timer_list[this.Callback].on_off==1)
-		{
-	this.manager.Timer(this.Callback,"Off")
-		}
-return
-	}
-
-
-}
-*/
