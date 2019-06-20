@@ -112,6 +112,11 @@ return
 Lwin::Numpad9 ;toggle Centralize the hero with command, need "bind KP_9 dota_camera_center" in cfg
 return
 
+~s::
+SendLevel 10
+if(GetKeyState("a","P"))
+SendInput("a")
+return
 
 CapsLock::m
 return

@@ -30,12 +30,9 @@ global tip1_x:=2300-(2560-A_ScreenWidth)
 global tip1_y:=100
 global default_timeout:=3000
 global switchback_delay:=1000
-global default_item_triggerkey:=["WheelUp","WheelDown","Space","6","$Xbutton2","$Xbutton1",,,,"5"] 
-global default_ability_triggerkey := ["$w","$e","$r","$g","$d","$f"]
-global default_ability_keyup := ["w","e","r","g","d","f"]
 ;adjust it for your own hotkey setting
-
 Gdip_Startup()
+
 probe0 := new ColorProbe(846,178) ;823,902-1668,1079
 MT:=new ThreadManager()
 bitmap0:=probe0.BltCapture(823,902,846,178)
@@ -66,6 +63,7 @@ Loop 6
 	Hotkey "If",Format('WinActive("ahk_exe dota2.exe")&&(soul_number==' A_Index ')&&(treads_number>0)')
 	Hotkey default_item_triggerkey[A_Index],"UseSoul"
 }
+	Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(n_ability==5)&&(treads_number>0)'
 Loop 4
 {
 	Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(n_ability==4||n_ability==6)&&(treads_number>0)'
@@ -73,14 +71,23 @@ Loop 4
 	Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(n_ability==5)&&(treads_number>0)'
 	Hotkey default_ability_triggerkey[A_Index],Format("Hero5CastAbility" A_Index)
 }
-Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(n_ability==5)&&(treads_number>0)'
-Hotkey default_ability_triggerkey[5],"Hero5CastAbility5"
-Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(n_ability==6)&&(treads_number>0)'
-Hotkey default_ability_triggerkey[5],"Hero6CastAbility5"
-Hotkey default_ability_triggerkey[6],"Hero6CastAbility6"
 Hotkey "If"
 
 ;#include put other script which contain hotkeys here.
+
+#SuspendExempt
+~NumpadSub::
+Suspend "On"
+SoundBeep 523
+SoundBeep 262
+return
+
+~NumpadAdd::
+Suspend "Off"
+SoundBeep 262
+SoundBeep 523
+return
+#SuspendExempt 0
 
 ~^LWin::
 Reload
@@ -102,7 +109,7 @@ n_ability:=common_hero.n_ability
 
 if(n_ability==10)
 n_ability:=4
-MsgBox n_ability
+;MsgBox n_ability
 if(treads_number>=1&&treads_number<=6)
 treads_default:=inventory.slot[treads_number].stat
 return
@@ -131,7 +138,8 @@ else if(rb_toggle==3)
 else if(rb_toggle==2)
 {
 	rb_toggle:=4
-	ToolTip("AlwaysSwitch",tip1_x,tip1_y,1)
+	ToolTip("AlwaysSwitch",tip1_x,tip1_y,1) 
+	;always switch to Int despite the status of cd, only switch back when right click
 }
 else if(rb_toggle==4)
 {
@@ -161,19 +169,21 @@ return
 
 
 
-#if WinActive("ahk_exe dota2.exe")&&(tb_toggle==0||rb_toggle==1||rb_toggle==2)
+#if WinActive("ahk_exe dota2.exe")&&(rb_toggle==0||rb_toggle==1||rb_toggle==2)
 ~a::
 SwitchToDefault()
+KeyWait "a"
 return
 
 #if WinActive("ahk_exe dota2.exe")&&(treads_default>=5&&treads_default<=7)
 ~Rbutton:: ;may conflict with default rclick, need rewrite it to #if
 if(rb_toggle==0||rb_toggle==2||rb_toggle==4)&&(block_right_switch==0)
 ToSTreads()
-else if(rb_toggle==1)
+else if(rb_toggle==1)&&(block_right_switch==0)
 {
 	SwitchToDefault()
 }
+KeyWait "Rbutton"
 return
 
 #if WinActive("ahk_exe dota2.exe")&&(armlet_number>0)
@@ -438,7 +448,7 @@ Ability4SwitchBack()
 
 Ability5SwitchS()
 {
-	global
+global
 	if(!common_hero.h_ability[5].IsReady(probe0))
 	{
 		ToSTreads()
@@ -477,205 +487,239 @@ Ability6SwitchBack()
 	global
 	if(!common_hero.h_ability[6].IsReady(probe0))
 	{
-		SwitchToDefault()
-		MT.Timer("Ability6SwitchBack","Off")
+	SwitchToDefault()
+	MT.Timer("Ability6SwitchBack","Off")
 		return
 	}
 	return
 }
 
-UseStick:
-ToATreads()
-inventory.Cast(stick_number)
-sleep 66
-ToSTreads()
-return
-
-UseSoul:
-ToSTreads()
-inventory.Cast(soul_number)
-sleep 66
-SwitchToDefault()
-
-return
-
-Hero46CastAbility1:
-if(common_hero.h_ability[1].IsReady(probe0)||rb_toggle==4)
+UseStick()
 {
+	global
+	ToATreads()
+	inventory.Cast(stick_number)
+	sleep 66
+	ToSTreads()
+	return
+}
+
+UseSoul()
+{
+	global
+	ToSTreads()
+	inventory.Cast(soul_number)
+	sleep 66
+	SwitchToDefault()
+	return
+}
+
+Hero46CastAbility1()
+{
+	global
+	if(common_hero.h_ability[1].IsReady(probe0)||rb_toggle==4)
+	{
+		ToITreads()
+	}
+	SendInput common_hero.h_ability[1].key
+	if(rb_toggle==2)
+	{
+		MT.TimerUntil(default_timeout,"Ability1SwitchS",30,,"ToSTreads")
+	}
+	else if(rb_toggle==3)
+	{
+		MT.TimerUntil(default_timeout,"Ability1SwitchBack",30,,"SwitchToDefault")
+	}
+	KeyWait(default_ability_keyup[1])
+	return
+}
+
+Hero46CastAbility2()
+{
+	global
+	if(common_hero.h_ability[2].IsReady(probe0)||rb_toggle==4)
+	{
+		ToITreads()
+	}
+	
+	SendInput common_hero.h_ability[2].key
+	
+	if(rb_toggle==2)
+	{
+		MT.TimerUntil(default_timeout,"Ability2SwitchS",30,,"ToSTreads")
+	}
+	else if(rb_toggle==3)
+	{
+		MT.TimerUntil(default_timeout,"Ability2SwitchBack",30,,"SwitchToDefault")
+	}
+	KeyWait(default_ability_keyup[2])
+	return
+}
+
+Hero46CastAbility3()
+{
+	global
+	if(common_hero.h_ability[3].IsReady(probe0)||rb_toggle==4)
+	{
+		ToITreads()
+	}
+	SendInput common_hero.h_ability[3].key
+	
+	if(rb_toggle==2)
+	{
+		MT.TimerUntil(default_timeout,"Ability3SwitchS",30,,"ToSTreads")
+	}
+	else if(rb_toggle==3)
+	{
+		MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
+	}
+	KeyWait(default_ability_keyup[3])
+	return
+}
+
+Hero46CastAbility4()
+{
+	global
+	ToATreads()
+	SendInput common_hero.h_ability[4].key
+	if(rb_toggle==2)
+	{
+		MT.Timer("ToSTreads",-switchback_delay)
+	}
+	else if(rb_toggle==3)
+	{
+		MT.Timer("SwitchToDefault",-switchback_delay)
+	}
+	KeyWait(default_ability_keyup[4])
+	return
+}
+
+Hero6CastAbility5()
+{
+	global
+	if(common_hero.h_ability[5].IsReady(probe0)||rb_toggle==4)
+	{
+		ToITreads()
+	}
+	SendInput common_hero.h_ability[5].key
+	
+	if(rb_toggle==2)
+	{
+		MT.TimerUntil(default_timeout,"Ability5SwitchS",30,,"ToSTreads")
+	}
+	else if(rb_toggle==3)
+	{
+		MT.TimerUntil(default_timeout,"Ability5SwitchBack",30,,"SwitchToDefault")
+	}
+	KeyWait(default_ability_keyup[5])
+	return
+}
+
+Hero6CastAbility6()
+{
+	global
+	if(common_hero.h_ability[6].IsReady(probe0)||rb_toggle==4)
+	{
+		ToITreads()
+	}
+	SendInput common_hero.h_ability[6].key
+	
+	if(rb_toggle==2)
+	{
+		MT.TimerUntil(default_timeout,"Ability6SwitchS",30,,"ToSTreads")
+	}
+	else if(rb_toggle==3)
+	{
+		MT.TimerUntil(default_timeout,"Ability6SwitchBack",30,,"SwitchToDefault")
+	}
+	KeyWait(default_ability_keyup[6])
+	return
+}
+
+Hero5CastAbility1()
+{
+	global
 	ToITreads()
+	SendInput common_hero.h_ability[1].key
+	if(rb_toggle==2)
+	{
+		MT.Timer("ToSTreads",-switchback_delay)
+	}
+	else if(rb_toggle==3)
+	{
+		MT.Timer("SwitchToDefault",-switchback_delay)
+	}
+	KeyWait(default_ability_keyup[1])
+	return
 }
-SendInput common_hero.h_ability[1].key
-if(rb_toggle==2)
-{
-	MT.TimerUntil(default_timeout,"Ability1SwitchS",30,,"ToSTreads")
-}
-else if(rb_toggle==3)
-{
-	MT.TimerUntil(default_timeout,"Ability1SwitchBack",30,,"SwitchToDefault")
-}
-KeyWait(default_ability_keyup[1])
-return
 
-Hero46CastAbility2:
-if(common_hero.h_ability[2].IsReady(probe0)||rb_toggle==4)
+Hero5CastAbility2()
 {
+	global
 	ToITreads()
+	SendInput common_hero.h_ability[2].key
+	if(rb_toggle==2)
+	{
+		MT.Timer("ToSTreads",-switchback_delay)
+	}
+	else if(rb_toggle==3)
+	{
+		MT.Timer("SwitchToDefault",-switchback_delay)
+	}
+	KeyWait(default_ability_keyup[2])
 }
-
-SendInput common_hero.h_ability[2].key
-
-if(rb_toggle==2)
-{
-	MT.TimerUntil(default_timeout,"Ability2SwitchS",30,,"ToSTreads")
-}
-else if(rb_toggle==3)
-{
-	MT.TimerUntil(default_timeout,"Ability2SwitchBack",30,,"SwitchToDefault")
-}
-KeyWait(default_ability_keyup[2])
 return
 
-Hero46CastAbility3:
-if(common_hero.h_ability[3].IsReady(probe0)||rb_toggle==4)
+Hero5CastAbility3()
 {
+	global
 	ToITreads()
+	SendInput common_hero.h_ability[3].key
+	if(rb_toggle==2)
+	{
+		MT.Timer("ToSTreads",-switchback_delay)
+	}
+	else if(rb_toggle==3)
+	{
+		MT.Timer("SwitchToDefault",-switchback_delay)
+	}
+	KeyWait(default_ability_keyup[3])
+	return
 }
-SendInput common_hero.h_ability[3].key
 
-if(rb_toggle==2)
+Hero5CastAbility4()
 {
-	MT.TimerUntil(default_timeout,"Ability3SwitchS",30,,"ToSTreads")
+	global
+	ToATreads()
+	SendInput common_hero.h_ability[4].key
+	if(rb_toggle==2)
+	{
+		MT.Timer("ToSTreads",-switchback_delay)
+	}
+	else if(rb_toggle==3)
+	{
+		MT.Timer("SwitchToDefault",-switchback_delay)
+	}
+	KeyWait(default_ability_keyup[4])
+	return
 }
-else if(rb_toggle==3)
-{
-	MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
-}
-KeyWait(default_ability_keyup[3])
-return
 
-Hero46CastAbility4:
-if(common_hero.h_ability[4].IsReady(probe0)||rb_toggle==4)
+Hero5CastAbility5()
 {
+	global
 	ToITreads()
+	SendInput common_hero.h_ability[5].key
+	if(rb_toggle==2)
+	{
+		MT.Timer("ToSTreads",-switchback_delay)
+	}
+	else if(rb_toggle==3)
+	{
+		MT.Timer("SwitchToDefault",-switchback_delay)
+	}
+	KeyWait(default_ability_keyup[5])
+	return
 }
-SendInput common_hero.h_ability[4].key
-
-if(rb_toggle==2)
-{
-	MT.TimerUntil(default_timeout,"Ability4SwitchS",30,,"ToSTreads")
-}
-else if(rb_toggle==3)
-{
-	MT.TimerUntil(default_timeout,"Ability4SwitchBack",30,,"SwitchToDefault")
-}
-KeyWait(default_ability_keyup[4])
-return
-
-Hero6CastAbility5:
-if(common_hero.h_ability[5].IsReady(probe0)||rb_toggle==4)
-{
-	ToITreads()
-}
-SendInput common_hero.h_ability[5].key
-
-if(rb_toggle==2)
-{
-	MT.TimerUntil(default_timeout,"Ability5SwitchS",30,,"ToSTreads")
-}
-else if(rb_toggle==3)
-{
-	MT.TimerUntil(default_timeout,"Ability5SwitchBack",30,,"SwitchToDefault")
-}
-KeyWait(default_ability_keyup[5])
-return
-
-Hero6CastAbility6:
-if(common_hero.h_ability[6].IsReady(probe0)||rb_toggle==4)
-{
-	ToITreads()
-}
-SendInput common_hero.h_ability[6].key
-
-if(rb_toggle==2)
-{
-	MT.TimerUntil(default_timeout,"Ability6SwitchS",30,,"ToSTreads")
-}
-else if(rb_toggle==3)
-{
-	MT.TimerUntil(default_timeout,"Ability6SwitchBack",30,,"SwitchToDefault")
-}
-KeyWait(default_ability_keyup[6])
-return
-
-Hero5CastAbility1:
-ToITreads()
-SendInput common_hero.h_ability[1].key
-if(rb_toggle==2)
-{
-	MT.Timer("ToSTreads",-switchback_delay)
-}
-else if(rb_toggle==3)
-{
-	MT.Timer("SwitchToDefault",-switchback_delay)
-}
-KeyWait(default_ability_keyup[1])
-return
-
-Hero5CastAbility2:
-ToITreads()
-SendInput common_hero.h_ability[2].key
-if(rb_toggle==2)
-{
-	MT.Timer("ToSTreads",-switchback_delay)
-}
-else if(rb_toggle==3)
-{
-	MT.Timer("SwitchToDefault",-switchback_delay)
-}
-KeyWait(default_ability_keyup[2])
-return
-
-Hero5CastAbility3:
-ToITreads()
-SendInput common_hero.h_ability[3].key
-if(rb_toggle==2)
-{
-	MT.Timer("ToSTreads",-switchback_delay)
-}
-else if(rb_toggle==3)
-{
-	MT.Timer("SwitchToDefault",-switchback_delay)
-}
-KeyWait(default_ability_keyup[3])
-return
-
-Hero5CastAbility4:
-ToITreads()
-SendInput common_hero.h_ability[4].key
-if(rb_toggle==2)
-{
-	MT.Timer("ToSTreads",-switchback_delay)
-}
-else if(rb_toggle==3)
-{
-	MT.Timer("SwitchToDefault",-switchback_delay)
-}
-KeyWait(default_ability_keyup[4])
-return
-
-Hero5CastAbility5:
-ToITreads()
-SendInput common_hero.h_ability[5].key
-if(rb_toggle==2)
-{
-	MT.Timer("ToSTreads",-switchback_delay)
-}
-else if(rb_toggle==3)
-{
-	MT.Timer("SwitchToDefault",-switchback_delay)
-}
-KeyWait(default_ability_keyup[5])
-return
 
 AfterArmlet()
 {

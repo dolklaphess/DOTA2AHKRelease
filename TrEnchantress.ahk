@@ -30,9 +30,10 @@ global tip1_x:=2300-(2560-A_ScreenWidth)
 global tip1_y:=100
 global default_timeout:=3000
 global switchback_delay:=1000
-global default_item_triggerkey:=["WheelUp","WheelDown","Space","6","$Xbutton2","$Xbutton1",,,,"5"] 
-global default_ability_triggerkey := ["$w","$e","$r","$g","$d","$f"]
-global default_ability_keyup := ["w","e","r","g","d","f"]
+if(enchantress_ability_triggerkey is "object")
+default_ability_triggerkey:=enchantress_ability_triggerkey
+if(enchantress_ability_keyup is "object")
+default_ability_keyup:=enchantress_ability_keyup
 ;adjust it for your own hotkey setting
 
 Gdip_Startup()

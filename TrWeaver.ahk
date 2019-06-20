@@ -30,11 +30,10 @@ global tip1_x:=2300-(2560-A_ScreenWidth)
 global tip1_y:=100
 global default_timeout:=3000
 global switchback_delay:=1000
-
-if(drowranger_ability_triggerkey is "object")
-default_ability_triggerkey:=drowranger_ability_triggerkey
-if(drowranger_ability_keyup is "object")
-default_ability_keyup:=drowranger_ability_keyup
+if(weaver_ability_triggerkey is "object")
+default_ability_triggerkey:=weaver_ability_triggerkey
+if(weaver_ability_keyup is "object")
+default_ability_keyup:=weaver_ability_keyup
 ;adjust it for your own hotkey setting
 
 Gdip_Startup()
@@ -47,9 +46,13 @@ dict.MultiLoad("STreads|ITreads|ATreads|Wand|Stick|Soul|ArmletOff|ArmletOn")
 inventory:= new DotaInventory
 
 block_right_switch:=0
+casting4:=0
+canceled:=1
 treads_number:=0
 treads_default:=0
 stick_number:=0 ;both stick and wand
+soul_number:=0
+armlet_number:=0
 n_ability:=4
 rb_toggle:=2 ;0:default--switch to Strength while moving, 1: To Default, 2::switch both while moving and after casting, 
 ;3::not switch on moving but after casting, -1:not switch at all
@@ -63,11 +66,14 @@ Loop 6
 {
 	Hotkey "If",Format('WinActive("ahk_exe dota2.exe")&&(stick_number==' A_Index ')&&(treads_number>0)')
 	Hotkey default_item_triggerkey[A_Index],"UseStick"
+	Hotkey "If",Format('WinActive("ahk_exe dota2.exe")&&(soul_number==' A_Index ')&&(treads_number>0)')
+	Hotkey default_item_triggerkey[A_Index],"UseSoul"
 }
 
 	Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(treads_number>0)'
-	Hotkey default_ability_triggerkey[1],Format("Hero46CastAbility1")
-	Hotkey default_ability_triggerkey[2],Format("Hero46CastAbility2")
+	Hotkey default_ability_triggerkey[1],"Hero46CastAbility1"
+	Hotkey default_ability_triggerkey[2],"Hero46CastAbility2"
+	Hotkey default_ability_triggerkey[4],"Hero46CastAbility4"
 Hotkey "If"
 
 ;#include put other script which contain hotkeys here.
@@ -91,6 +97,9 @@ Reload
 return
 
 #if WinActive("ahk_exe dota2.exe")
+~s::
+canceled:=0
+return
 
 ~+S:: ;need renew the hero at the same time
 common_hero.Renew(probe0)
@@ -99,6 +108,8 @@ treads_number:=inventory.SearchItem("Treads")
 stick_number:=inventory.SearchItem("Wand")
 if(stick_number==0)
 stick_number:=inventory.SearchItem("Stick")
+soul_number:=inventory.SearchItem("Soul")
+armlet_number:=inventory.SearchItem("Armlet")
 ;MsgBox wand_number
 n_ability:=common_hero.n_ability
 if(treads_number>=1&&treads_number<=6)
@@ -130,7 +141,8 @@ else if(rb_toggle==2)
 {
 	rb_toggle:=4
 	ToolTip("AlwaysSwitch",tip1_x,tip1_y,1)
-	}
+	;always switch to Int despite the status of cd, only switch back when right click																				  
+}
 else if(rb_toggle==4)
 {
 	rb_toggle:=-1
@@ -157,22 +169,29 @@ if(rb_toggle!==3)
 rb_toggle:=3
 return
 
-#if WinActive("ahk_exe dota2.exe")&&(rb_toggle==0||rb_toggle==1||rb_toggle==2)
+
+#if WinActive("ahk_exe dota2.exe")
 ~a::
+if(block_right_switch==0)&&(tb_toggle==0||rb_toggle==1||rb_toggle==2)
 SwitchToDefault()
+block_right_switch:=0
+canceled:=1
 KeyWait "a"
 return
 
 #if WinActive("ahk_exe dota2.exe")&&(treads_default>=5&&treads_default<=7)
 ~Rbutton:: ;may conflict with default rclick, need rewrite it to #if
+
 if(rb_toggle==0||rb_toggle==2||rb_toggle==4)&&(block_right_switch==0)
 ToSTreads()
-else if(rb_toggle==1)
+else if(rb_toggle==1)&&(block_right_switch==0)
 {
 	SwitchToDefault()
 }
 KeyWait "Rbutton"
 return
+
+#if WinActive("ahk_exe dota2.exe")
 
 #if WinActive("ahk_exe dota2.exe")&&(stick_number==1)&&(treads_number>0)
 
@@ -185,6 +204,18 @@ return
 #if WinActive("ahk_exe dota2.exe")&&(stick_number==5)&&(treads_number>0)
 
 #if WinActive("ahk_exe dota2.exe")&&(stick_number==6)&&(treads_number>0)
+
+#if WinActive("ahk_exe dota2.exe")&&(soul_number==1)&&(treads_number>0)
+
+#if WinActive("ahk_exe dota2.exe")&&(soul_number==2)&&(treads_number>0)
+
+#if WinActive("ahk_exe dota2.exe")&&(soul_number==3)&&(treads_number>0)
+
+#if WinActive("ahk_exe dota2.exe")&&(soul_number==4)&&(treads_number>0)
+
+#if WinActive("ahk_exe dota2.exe")&&(soul_number==5)&&(treads_number>0)
+
+#if WinActive("ahk_exe dota2.exe")&&(soul_number==6)&&(treads_number>0)
 
 #if WinActive("ahk_exe dota2.exe")&&(treads_number>0)
 
@@ -317,12 +348,14 @@ Ability1SwitchBack()
 	return
 }
 
+
 Ability2SwitchS()
 {
 	global
-	if(!common_hero.h_ability[2].IsReady(probe0))
+	if(!common_hero.h_ability[3].IsReady(probe0))
 	{
-	ToSTreads()
+		if(block_right_switch==0)
+		ToSTreads()
 		MT.Timer("Ability2SwitchS","Off")
 		return
 	}
@@ -332,34 +365,11 @@ Ability2SwitchS()
 Ability2SwitchBack()
 {
 	global
-	if(!common_hero.h_ability[2].IsReady(probe0))
+	if(!common_hero.h_ability[3].IsReady(probe0))
 	{
+		if(block_right_switch==0)
 		SwitchToDefault()
 		MT.Timer("Ability2SwitchBack","Off")
-		return
-	}
-	return
-}
-
-Ability3SwitchS()
-{
-	global
-	if(!common_hero.h_ability[3].IsReady(probe0))
-	{
-		ToSTreads()
-		MT.Timer("Ability3SwitchS","Off")
-		return
-	}
-	return
-}
-
-Ability3SwitchBack()
-{
-	global
-	if(!common_hero.h_ability[3].IsReady(probe0))
-	{
-		SwitchToDefault()
-		MT.Timer("Ability3SwitchBack","Off")
 		return
 	}
 	return
@@ -439,7 +449,7 @@ Ability6SwitchBack()
 
 UseStick()
 {
-	global
+	global   
 ToATreads()
 inventory.Cast(stick_number)
 sleep 66
@@ -447,34 +457,95 @@ ToSTreads()
 return
 }
 
+UseSoul()
+{
+	global	   
+ToSTreads()
+inventory.Cast(soul_number)
+sleep 66
+SwitchToDefault()
+
+return
+}
+				   
+
 Hero46CastAbility1()
 {
-	global
-if(rb_toggle==0||rb_toggle==1||rb_toggle==2)
-ToATreads()
+	global													  
+if(common_hero.h_ability[1].IsReady(probe0))
+{
+	ToITreads()
+}
 SendInput common_hero.h_ability[1].key
+if(rb_toggle==2)
+{
+	MT.TimerUntil(default_timeout,"Ability1SwitchS",30,,"ToSTreads")
+}
+else if(rb_toggle==3)
+{
+	MT.TimerUntil(default_timeout,"Ability1SwitchBack",30,,"SwitchToDefault")
+}
 KeyWait(default_ability_keyup[1])
 return
 }
 
 Hero46CastAbility2()
+											
 {
 	global
-if(common_hero.h_ability[2].IsReady(probe0)||rb_toggle==4)
+if(common_hero.h_ability[2].IsReady(probe0))
 {
+	block_right_switch:=1
 	ToITreads()
 }
 SendInput common_hero.h_ability[2].key
+;MT.Timer("InvisibleBlock",-200)
 if(rb_toggle==2)
 {
-	MT.TimerUntil(default_timeout,"Ability2SwitchS",30,,"ToSTreads")
+	SendInput inventory.slot[treads_number].nkey inventory.slot[treads_number].nkey
+	;MT.TimerUntil(default_timeout,"Ability3SwitchS",30,,"ToSTreads")
 }
 else if(rb_toggle==3)
 {
-	MT.TimerUntil(default_timeout,"Ability2SwitchBack",30,,"SwitchToDefault")
+
+	if(treads_default==5)
+	SendInput(inventory.slot[treads_number].nkey inventory.slot[treads_number].nkey)
+	else if(treads_default==7)
+	SendInput(inventory.slot[treads_number].nkey)
+
+	;MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
 }
 KeyWait(default_ability_keyup[2])
 return
 }
 
 
+
+Hero46CastAbility4()
+{
+	global
+	if(common_hero.h_ability[4].IsReady(probe0)||rb_toggle==4)
+	{
+		ToITreads()
+	}
+	SendInput common_hero.h_ability[4].key
+	
+	if(rb_toggle==2)
+	{
+		MT.TimerUntil(default_timeout,"Ability4SwitchS",30,,"ToSTreads")
+	}
+	else if(rb_toggle==3)
+	{
+		MT.TimerUntil(default_timeout,"Ability4SwitchBack",30,,"SwitchToDefault")
+	}
+	KeyWait(default_ability_keyup[4])
+	return
+}
+		
+		InvisibleBlock()
+{
+	global
+	block_right_switch:=1
+	return
+					 
+}
