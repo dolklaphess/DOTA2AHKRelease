@@ -30,12 +30,9 @@ global tip1_x:=2300-(2560-A_ScreenWidth)
 global tip1_y:=100
 global default_timeout:=3000
 global switchback_delay:=1000
-global default_item_triggerkey:=["WheelUp","WheelDown","Space","6","$Xbutton2","$Xbutton1",,,,"5"] 
-global default_ability_triggerkey := ["$w","$e","$r","$g","$d","$f"]
-global default_ability_keyup := ["w","e","r","g","d","f"]
 ;adjust it for your own hotkey setting
-
 Gdip_Startup()
+
 probe0 := new ColorProbe(846,178) ;823,902-1668,1079
 MT:=new ThreadManager()
 bitmap0:=probe0.BltCapture(823,902,846,178)
@@ -186,7 +183,7 @@ return
 ~Rbutton:: ;may conflict with default rclick, need rewrite it to #if
 if(rb_toggle==0||rb_toggle==2||rb_toggle==4)&&(block_right_switch==0)
 ToSTreads()
-else if(rb_toggle==1)
+else if(rb_toggle==1)&&(block_right_switch==0)
 {
 	SwitchToDefault()
 }
