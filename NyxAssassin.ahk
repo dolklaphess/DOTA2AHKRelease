@@ -11,8 +11,6 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 SetKeyDelay -1
 
 
-global default_ability_triggerkey := ["$w","$e","$r","$g","$d","$f"]
-global default_ability_keyup := ["w","e","r","g","d","f"]
 global default_timeout:=3000
 
 Gdip_Startup()
@@ -78,7 +76,7 @@ SendInput("{NumpadMult}")
 return
 }
 
-~s::
+~h::
 canceled:=1
 return
 	

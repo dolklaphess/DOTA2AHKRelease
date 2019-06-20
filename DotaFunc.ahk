@@ -6,7 +6,8 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #include MyMath.ahk
 #include Gdip_All.ahk
 
-
+global tip10_x:=2300-(2560-A_ScreenWidth)
+global tip10_y:=500
 
 GetAbilityNum(probe,sdc:=0) ;this function retrive the total number of current hero's abilities
 {
@@ -30,7 +31,9 @@ GetAbilityNum(probe,sdc:=0) ;this function retrive the total number of current h
 			{
 				if(WinActive("ahk_exe dota2.exe"))
 				{
-					MsgBox "unexpected hud"
+					ToolTip("unexpected hud",tip10_x,tip10_y,10) 
+					SoundBeep(2000,500)
+					SetTimer("Tip10Off",-5000)
 					return -2
 					;throw 2 ;unexpected error
 				}
@@ -46,7 +49,9 @@ GetAbilityNum(probe,sdc:=0) ;this function retrive the total number of current h
 	}
 	if(WinActive("ahk_exe dota2.exe"))
 	{
-		MsgBox "NotFound"
+			ToolTip("unexpected hud",tip10_x,tip10_y,10) 
+			SoundBeep(2000,500)
+			SetTimer("Tip10Off",-5000)
 		return -2
 	}
 	return -1
@@ -74,9 +79,10 @@ GetAbilityNumFromBitmap(bitmap,sdc:=0) ;this function retrive the total number o
 			{
 				if(WinActive("ahk_exe dota2.exe"))
 				{
-					MsgBox "unexpected hud"
-					return -2
-					;throw 2 ;unexpected error
+			ToolTip("unexpected hud",tip10_x,tip10_y,10) 
+			SoundBeep(2000,500)
+			SetTimer("Tip10Off",-5000)
+		return -2
 				}
 				else
 				return -1
@@ -90,7 +96,9 @@ GetAbilityNumFromBitmap(bitmap,sdc:=0) ;this function retrive the total number o
 	}
 	if(WinActive("ahk_exe dota2.exe"))
 	{
-		MsgBox "NotFound"
+			ToolTip("HeroNotFound",tip10_x,tip10_y,10) 
+			SoundBeep(2000,500)
+			SetTimer("Tip10Off",-5000)
 		return -2
 	}
 	return -1
@@ -249,8 +257,20 @@ CreateAbilityArray(n_ability,dir,castkey,ncastkey)
 	}
 	else
 	{
-		throw 2
-		Msgbox "Ability number out of range" ;morphling n_a:=10, updating needed
+		
+		ToolTip("Ability number out of range",tip10_x,tip10_y,10) ;morphling n_a:=10, updating needed
+		SetTimer("Tip10Off",-5000)
+		SoundBeep 2000,500
+		n_ability:=4
+		n_interval:=[ 0,1,2,3 ]
+		x0a1:=1161
+		y0a1:=941
+		x1a1:=1210
+		y1a1:=947
+		x2a1:=1218
+		y2a1:=969
+		w:=64
+		d:=65
 	}
 
 	
@@ -307,3 +327,8 @@ CreateAbilityArray(n_ability,dir,castkey,ncastkey)
 	*/
 ;GetAbilityNum(probe0,fsdc)
 
+Tip10Off()
+{
+	ToolTip ,,,10
+	return
+}

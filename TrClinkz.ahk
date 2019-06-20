@@ -30,10 +30,14 @@ global tip1_x:=2300-(2560-A_ScreenWidth)
 global tip1_y:=100
 global default_timeout:=3000
 global switchback_delay:=1000
-global default_item_triggerkey:=["WheelUp","WheelDown","Space","6","$Xbutton2","$Xbutton1",,,,"5"] 
-global default_ability_triggerkey := ["$w","$e","$r","$g","$d","$f"]
-global default_ability_keyup := ["w","e","r","g","d","f"]
+
+if(clinkz_ability_triggerkey is "object")
+default_ability_triggerkey:=clinkz_ability_triggerkey
+if(clinkz_ability_keyup is "object")
+default_ability_keyup:=clinkz_ability_keyup
 ;adjust it for your own hotkey setting
+
+
 
 Gdip_Startup()
 probe0 := new ColorProbe(846,178) ;823,902-1668,1079
@@ -100,7 +104,13 @@ return
 #if WinActive("ahk_exe dota2.exe")
 ~s::
 canceled:=0
+;SendLevel 10
+if(GetKeyState("e","P"))
+{
+SendInput("e")
+}
 return
+
 
 ~+S:: ;need renew the hero at the same time
 common_hero.Renew(probe0)
@@ -185,7 +195,7 @@ return
 
 if(rb_toggle==0||rb_toggle==2||rb_toggle==4)&&(block_right_switch==0)
 ToSTreads()
-else if(rb_toggle==1)
+else if(rb_toggle==1)&&(block_right_switch==0)
 {
 	SwitchToDefault()
 }
@@ -538,18 +548,25 @@ Hero46CastAbility3()
 	global
 if(common_hero.h_ability[3].IsReady(probe0))
 {
-	block_right_switch:=0
+	block_right_switch:=1
 	ToITreads()
 }
 SendInput common_hero.h_ability[3].key
-MT.Timer("InvisibleBlock",-500)
+;MT.Timer("InvisibleBlock",-500)
 if(rb_toggle==2)
 {
-	MT.TimerUntil(default_timeout,"Ability3SwitchS",30,,"ToSTreads")
+	SendInput inventory.slot[treads_number].nkey inventory.slot[treads_number].nkey
+	;MT.TimerUntil(default_timeout,"Ability3SwitchS",30,,"ToSTreads")
 }
 else if(rb_toggle==3)
 {
-	MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
+
+	if(treads_default==5)
+	SendInput(inventory.slot[treads_number].nkey inventory.slot[treads_number].nkey)
+	else if(treads_default==7)
+	SendInput(inventory.slot[treads_number].nkey)
+
+	;MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
 }
 KeyWait(default_ability_keyup[3])
 return
