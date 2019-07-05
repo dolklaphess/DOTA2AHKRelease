@@ -94,7 +94,7 @@ if(Rep_Stat)
 		MT.Timer("RclickRepeat","On")
 	}
 	else
-	MT.Timer("RclickRepeat",10,-5)
+	MT.Timer("RclickRepeat",15) ;,-5
 }
 return
 
@@ -375,5 +375,7 @@ RclickRepeat()
 	global
 	if(GetKeyState("RButton","P")==0)
 	MT.Timer("RclickRepeat","Off")
-	SendInput "{Click Right}m"
+	SendInput "{Click Right}" 
+	sleep 5
+	SendInput "m" ;
 }

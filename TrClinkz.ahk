@@ -48,6 +48,7 @@ dict:=new ItemDict()
 dict.MultiLoad("STreads|ITreads|ATreads|Wand|Stick|Soul|ArmletOff|ArmletOn")
 inventory:= new DotaInventory
 
+block_3_switch:=0
 block_right_switch:=0
 casting4:=0
 canceled:=1
@@ -72,16 +73,16 @@ Loop 6
 	Hotkey "If",Format('WinActive("ahk_exe dota2.exe")&&(soul_number==' A_Index ')&&(treads_number>0)')
 	Hotkey default_item_triggerkey[A_Index],"UseSoul"
 }
-Loop 3
-{
 	Hotkey "If",'WinActive("ahk_exe dota2.exe")&&(treads_number>0)'
-	Hotkey default_ability_triggerkey[A_Index],Format("Hero46CastAbility" A_Index)
-}
+	Hotkey default_ability_triggerkey[1],"Hero46CastAbility1"
+	Hotkey default_ability_triggerkey[3],"Hero46CastAbility3"
 	Hotkey "If",'WinActive("ahk_exe dota2.exe")'
 	Hotkey default_ability_triggerkey[4],"Hero46CastAbility4"
 Hotkey "If"
-
+	Hotkey default_ability_triggerkey[2],"Hero46CastAbility2"
 ;#include put other script which contain hotkeys here.
+
+
 
 #SuspendExempt
 ~NumpadSub::
@@ -532,25 +533,48 @@ return
 Hero46CastAbility2()
 				   {
 				   global
-if(rb_toggle==1||rb_toggle==2||rb_toggle==3)&&(block_right_switch==0)
+if(rb_toggle==1||rb_toggle==2||rb_toggle==3)&&(block_right_switch==0)&&(treads_number>0)
 {
 	ToATreads()
 }
 SendInput common_hero.h_ability[2].key
 block_right_switch:=0
+/*
+	if(MT.timer_list["Ability2clickRepeat"]==1)
+	{
+		if MT.timer_list["Ability2clickRepeat"].on_off==0
+		MT.Timer("Ability2clickRepeat","On")
+	}
+	else
+	MT.Timer("Ability2clickRepeat",100)
+*/
 KeyWait(default_ability_keyup[2])
 return
 }
-
-Hero46CastAbility3()
-											
+/*
+Ability2clickRepeat()
 {
 	global
+	if(GetKeyState(default_ability_keyup[2],"P")==0)
+	MT.Timer("Ability2clickRepeat","Off")
+	SendInput common_hero.h_ability[2].key
+return
+}
+*/
+Hero46CastAbility3()						
+{
+	global
+	if(block_3_switch==1)
+	{
+	SendInput common_hero.h_ability[3].key
+	return
+	}
+	
 if(common_hero.h_ability[3].IsReady(probe0))
 {
 	block_right_switch:=1
 	ToITreads()
-}
+
 SendInput common_hero.h_ability[3].key
 ;MT.Timer("InvisibleBlock",-500)
 if(rb_toggle==2)
@@ -568,8 +592,35 @@ else if(rb_toggle==3)
 
 	;MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
 }
+	block_3_switch:=1
+	MT.TimerUntil(default_timeout,"Ability3PushAnotherKey",30,,"UnBlock")
+}
+else
+SendInput common_hero.h_ability[3].key
+
 KeyWait(default_ability_keyup[3])
 return
+}
+
+Ability3PushAnotherKey()
+{
+global
+if A_PriorKey==default_ability_keyup[3]
+return
+else
+{
+block_3_switch:=0
+	MT.Timer("Ability3PushAnotherKey","Off")
+return
+}
+}
+
+UnBlock()
+{
+global
+block_3_switch:=0
+return
+
 }
 
 
