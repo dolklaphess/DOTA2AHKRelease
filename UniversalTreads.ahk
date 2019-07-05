@@ -524,7 +524,7 @@ Hero46CastAbility1()
 	if(common_hero.h_ability[1].IsReady(probe0)||rb_toggle==4)
 	{
 		ToITreads()
-	}
+
 	SendInput common_hero.h_ability[1].key
 	if(rb_toggle==2)
 	{
@@ -534,6 +534,9 @@ Hero46CastAbility1()
 	{
 		MT.TimerUntil(default_timeout,"Ability1SwitchBack",30,,"SwitchToDefault")
 	}
+	}
+	else
+	SendInput common_hero.h_ability[1].key	
 	KeyWait(default_ability_keyup[1])
 	return
 }
@@ -544,7 +547,7 @@ Hero46CastAbility2()
 	if(common_hero.h_ability[2].IsReady(probe0)||rb_toggle==4)
 	{
 		ToITreads()
-	}
+
 	
 	SendInput common_hero.h_ability[2].key
 	
@@ -556,6 +559,9 @@ Hero46CastAbility2()
 	{
 		MT.TimerUntil(default_timeout,"Ability2SwitchBack",30,,"SwitchToDefault")
 	}
+	}
+	else
+	SendInput common_hero.h_ability[2].key	
 	KeyWait(default_ability_keyup[2])
 	return
 }
@@ -566,7 +572,7 @@ Hero46CastAbility3()
 	if(common_hero.h_ability[3].IsReady(probe0)||rb_toggle==4)
 	{
 		ToITreads()
-	}
+
 	SendInput common_hero.h_ability[3].key
 	
 	if(rb_toggle==2)
@@ -577,6 +583,9 @@ Hero46CastAbility3()
 	{
 		MT.TimerUntil(default_timeout,"Ability3SwitchBack",30,,"SwitchToDefault")
 	}
+	}
+	else
+	SendInput common_hero.h_ability[3].key
 	KeyWait(default_ability_keyup[3])
 	return
 }
@@ -587,7 +596,7 @@ Hero46CastAbility4()
 	if(common_hero.h_ability[4].IsReady(probe0)||rb_toggle==4)
 	{
 		ToITreads()
-	}
+
 	SendInput common_hero.h_ability[4].key
 	
 	if(rb_toggle==2)
@@ -598,6 +607,8 @@ Hero46CastAbility4()
 	{
 		MT.TimerUntil(default_timeout,"Ability4SwitchBack",30,,"SwitchToDefault")
 	}
+	}
+	SendInput common_hero.h_ability[4].key
 	KeyWait(default_ability_keyup[4])
 	return
 }
@@ -608,7 +619,7 @@ Hero6CastAbility5()
 	if(common_hero.h_ability[5].IsReady(probe0)||rb_toggle==4)
 	{
 		ToITreads()
-	}
+
 	SendInput common_hero.h_ability[5].key
 	
 	if(rb_toggle==2)
@@ -619,6 +630,9 @@ Hero6CastAbility5()
 	{
 		MT.TimerUntil(default_timeout,"Ability5SwitchBack",30,,"SwitchToDefault")
 	}
+	}
+	else
+	SendInput common_hero.h_ability[5].key	
 	KeyWait(default_ability_keyup[5])
 	return
 }
@@ -629,7 +643,7 @@ Hero6CastAbility6()
 	if(common_hero.h_ability[6].IsReady(probe0)||rb_toggle==4)
 	{
 		ToITreads()
-	}
+
 	SendInput common_hero.h_ability[6].key
 	
 	if(rb_toggle==2)
@@ -640,6 +654,9 @@ Hero6CastAbility6()
 	{
 		MT.TimerUntil(default_timeout,"Ability6SwitchBack",30,,"SwitchToDefault")
 	}
+	}
+	else
+	SendInput common_hero.h_ability[6].key	
 	KeyWait(default_ability_keyup[6])
 	return
 }
